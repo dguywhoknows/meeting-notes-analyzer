@@ -1,0 +1,16 @@
+{
+  "name": "meeting-notes-analyzer",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Turn a meeting transcript into minutes, decisions and owned action items, plus speaker analytics: talk time, interruptions, balance and a timeline.",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "test": "node tests/run-node.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dguywhoknows/meeting-notes-analyzer.git"
+  },
+  "homepage": "https://dguywhoknows.github.io/meeting-notes-analyzer/",
+  "license": "MIT"
+}
