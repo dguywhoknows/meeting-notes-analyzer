@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en" data-gate="app">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Minutes Miner</title>
+<meta name="description" content="Turn a meeting transcript into minutes, decisions and owned action items, plus speaker analytics: talk time, interruptions, balance and a timeline.">
+<meta name="app-repo" content="https://github.com/dguywhoknows/meeting-notes-analyzer">
+<meta name="app-version" content="2.0.0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23b45309'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='Arial%2CHelvetica%2Csans-serif' font-weight='700' font-size='13' fill='white'%3EMM%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/app.css">
+<script src="src/lib/config.js"></script>
+<script src="src/lib/auth.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><a class="logo-link" href="index.html" aria-label="Home page"><span class="logo" aria-hidden="true">MM</span></a><div><h1>Minutes Miner</h1><p>Transcript in. Decisions, owners and dynamics out.</p></div></div>
+  <nav class="topnav" data-nav aria-label="Pages"></nav>
+  <div class="top-actions"><a class="btn ghost sm" href="https://github.com/dguywhoknows/meeting-notes-analyzer" target="_blank" rel="noopener">GitHub</a><span data-ai-badge></span></div>
+</header>
+<div class="page active" data-page="analyze" data-title="Analyze">
+<main class="grid side">
+  <section class="stack">
+    <div class="card stack">
+      <div class="row between"><h2 style="margin:0">Transcript</h2><label class="btn sm">Open .txt / .vtt / .srt<input type="file" id="file" accept=".txt,.vtt,.srt,.md" hidden></label></div>
+      <div class="grid cols-2"><label>Title<input class="input" id="mTitle" value="Beta launch go/no-go"></label><label>Date<input class="input" type="date" id="mDate"></label></div>
+      <textarea id="tx" class="mono" spellcheck="false" aria-label="Transcript"></textarea>
+      <div class="row"><button class="btn primary" id="analyze">Analyze and save</button><button class="btn" id="newMeeting">New meeting</button></div>
+      <p class="small muted" style="margin:0">Formats: <code>Name: text</code>, <code>[00:03:12] Name: text</code>, Zoom/Teams WebVTT and SRT exports.</p>
+    </div>
+  </section>
+  <section class="stack">
+    <div class="kpis" id="tiles"></div>
+    <div class="card"><h2>Speaker timeline</h2><div id="timeline"></div></div>
+    <div class="grid cols-2">
+      <div class="card"><h2>Talk share</h2><div id="share"></div></div>
+      <div class="card"><h2>Key terms</h2><div id="terms" class="row"></div></div>
+    </div>
+    <div class="card"><h2>Dynamics</h2><div class="table-wrap" id="dyn"></div></div>
+  </section>
+</main>
+</div>
+
+<div class="page" data-page="minutes" data-title="Minutes">
+<main class="stack" style="max-width:980px">
+  <div class="page-head"><div><h2 id="minTitle">Minutes</h2><p id="minSub"></p></div><div class="row"><button class="btn" id="localMine">Extract without AI</button><button class="btn primary" id="mine">Write minutes with AI</button></div></div>
+  <div class="card" id="minutes"><div class="empty">Extract decisions and action items from the current meeting.</div></div>
+</main>
+</div>
+
+<div class="page" data-page="actions" data-title="Actions">
+<main class="stack">
+  <div class="card row"><select id="aOwner" style="width:auto" aria-label="Owner"><option value="">Everyone</option></select><select id="aStatus" style="width:auto" aria-label="Status"><option value="open">Open</option><option value="overdue">Overdue</option><option value="done">Done</option><option value="">All</option></select><span class="grow"></span><span class="small muted" id="aCount"></span><button class="btn ghost" id="aCsv">Export CSV</button></div>
+  <div class="card table-wrap"><table id="aTable"></table></div>
+</main>
+</div>
+
+<div class="page" data-page="meetings" data-title="Meetings">
+<main class="stack">
+  <div class="page-head"><div><h2>Meetings</h2><p id="mSummary"></p></div></div>
+  <div class="grid cols-2">
+    <div class="card"><h2>All meetings</h2><div id="mList"></div></div>
+    <div class="card"><h2>Talk share across meetings</h2><div id="trend"></div></div>
+  </div>
+</main>
+</div>
+
+<div class="page" data-page="search" data-title="Search">
+<main class="stack" style="max-width:980px">
+  <div class="card row"><input class="input grow" id="q" placeholder="Search every saved transcript, e.g. pricing" aria-label="Search"><span class="small muted" id="qCount"></span></div>
+  <div id="results" class="stack"></div>
+</main>
+</div>
+
+<div class="page" data-page="settings" data-title="Settings"></div>
+<script src="src/lib/dom.js"></script>
+<script src="src/lib/ai.js"></script>
+<script src="src/lib/router.js"></script>
+<script src="src/lib/copilot.js"></script>
+<script src="src/core.js"></script>
+<script src="src/demo.js"></script>
+<script src="src/app.js"></script>
+</body>
+</html>

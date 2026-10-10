@@ -178,3 +178,22 @@ persist();
 loadEditor();
 renderAnalysis();
 renderMinutes();
+
+/* ================= AI command box ================= */
+const findAction = (q) => { const s = String(q).toLowerCase(), all = allActions(); const a = all.find((x) => x.task.toLowerCase().includes(s)) || all.find((x) => s.split(/\s+/).filter((w) => w.length > 3).every((w) => x.task.toLowerCase().includes(w))); if (!a) throw new Error(`No action item like "${q}"`); return a; };
+const ensureMinutes = async () => { if (!cur().minutes) await mineAI(); return cur().minutes; };
+Copilot.register({
+  context: () => { const m = cur(), A = turnsOf(m).length ? analyzeTurns(turnsOf(m)) : null; return `Current meeting "${m.title}" on ${m.date}${A ? `, speakers: ${A.list.map((s) => `${s.name} ${Math.round(s.share * 100)}%`).join(', ')}` : ''}. Minutes ${m.minutes ? `extracted: ${m.minutes.decisions.length} decisions, action items: ${m.minutes.action_items.map((a) => `${a.owner}: ${a.task} (${a.dueDate || a.due || 'no date'})${a.done ? ' done' : ''}`).join('; ')}` : 'not extracted yet'}. ${meetings.length} meetings saved.`; },
+  actions: [
+    { name: 'load_transcript', description: 'Load a pasted transcript ("Name: text" lines) as a new meeting and analyze it', params: { title: 'meeting title', text: 'transcript' }, run: ({ title, text }) => { $('#newMeeting').click(); $('#tx').value = text; $('#mTitle').value = title || 'Meeting'; $('#analyze').click(); return `Loaded ${turnsOf(cur()).length} turns`; } },
+    { name: 'write_minutes', description: 'Extract summary, decisions, action items, open questions and risks from the current meeting', params: {}, run: async () => { Router.go('minutes'); await mineAI(); const M = cur().minutes; return `${M.decisions.length} decisions, ${M.action_items.length} action items`; } },
+    { name: 'action_items', query: true, description: 'Look up action items across meetings, optionally for one person', params: { owner: 'optional name' },
+      run: async ({ owner }) => { await ensureMinutes(); const o = String(owner || '').toLowerCase(); return JSON.stringify(allActions().filter((a) => !o || (a.owner || '').toLowerCase().includes(o)).map((a) => ({ task: a.task, owner: a.owner, due: a.due, dueDate: a.dueDate, done: a.done, quote: a.quote, meeting: a.meeting }))); } },
+    { name: 'update_action', description: 'Mark an action item done or open, or change its owner or due date', params: { task: 'words from the task', done: 'optional true/false', owner: 'optional name', due_date: 'optional YYYY-MM-DD' },
+      run: async ({ task, done, owner, due_date }) => { await ensureMinutes(); const a = findAction(task); if (done != null) a.done = done === true || done === 'true'; if (owner) a.owner = owner; if (due_date) a.dueDate = due_date; persist(); if (Router.current === 'actions') renderActions(); else { Router.go('minutes'); renderMinutes(); } return `${a.task}: ${a.done ? 'done' : 'open'}, ${a.owner || 'Unassigned'}${a.dueDate ? ', due ' + a.dueDate : ''}`; } },
+    { name: 'add_action', description: 'Add an action item to the current meeting', params: { task: 'task', owner: 'name', due_date: 'optional YYYY-MM-DD' }, run: async ({ task, owner, due_date }) => { const M = await ensureMinutes(); M.action_items.push({ id: uid(), task, owner: owner || 'Unassigned', dueDate: due_date || '', done: false }); persist(); Router.go('minutes'); renderMinutes(); return `Added: ${task}`; } },
+    { name: 'follow_up_email', description: 'Draft the follow-up email from the minutes', params: {}, run: async () => { await ensureMinutes(); Router.go('minutes'); renderMinutes(); await email(); return 'Email drafted under the minutes'; } },
+    { name: 'search', query: true, description: 'Search what was said across all meetings', params: { text: 'words to find' }, run: ({ text }) => { Router.go('search'); $('#q').value = text; renderSearch(); return JSON.stringify(searchMeetings(meetings.map((m) => ({ id: m.id, title: m.title, date: m.date, turns: turnsOf(m) })), text).slice(0, 15).map((x) => ({ meeting: x.title, at: fmtTime(x.at), speaker: x.speaker, text: x.text }))); } },
+    { name: 'participation', query: true, description: 'Look up who spoke how much, interruptions and questions in the current meeting', params: {}, run: () => JSON.stringify(analyzeTurns(turnsOf(cur())).list.map((s) => ({ name: s.name, share: Math.round(s.share * 100), turns: s.turns, questions: s.questions, interrupts: s.interrupts, cutOff: s.cutOff }))) },
+  ],
+});
