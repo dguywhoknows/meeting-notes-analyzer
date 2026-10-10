@@ -1,4 +1,4 @@
-/* demo.js — a sample product meeting transcript and the minutes used when no model provider is configured. */
+/* A sample product meeting transcript and the minutes used when no model provider is configured. */
 var SAMPLE_TRANSCRIPT = `[00:00:05] Priya: Okay, let's get started. Goal today is to decide whether the beta ships on the 21st. Marcus, where's engineering at?
 [00:00:18] Marcus: Core flows are done. The two blockers are SSO and the onboarding checklist. SSO is honestly another two weeks, maybe more, the identity provider docs are a mess—
 [00:00:34] Jen: Sorry to jump in, but do beta users actually need SSO? From the interviews, only one of the twelve design partners asked for it.

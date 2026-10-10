@@ -1,4 +1,4 @@
-/* core.js — transcript parsing, participation analytics, rule-based extraction of decisions and action items, due-date resolution and search (pure, unit-tested). */
+/* Transcript parsing, participation analytics, rule-based extraction of decisions and action items, due-date resolution and search (pure, unit-tested). */
 
 function toSec(s) {
   var p = String(s).split(/[:.,]/).map(Number);

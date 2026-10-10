@@ -1,4 +1,4 @@
-:root { --accent: #b45309; }
+:root { --accent: #8a5a12; }
 #tx { min-height: 480px; font-size: 12px; }
 .lane { display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: 8px; align-items: center; margin-bottom: 6px; font-size: 12px; }
 .lane .track { position: relative; height: 18px; background: var(--panel-2); border-radius: 4px; }
