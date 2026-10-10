@@ -2,9 +2,9 @@
 window.APP_CONFIG = {
   "slug": "meeting-notes-analyzer",
   "name": "Minutes Miner",
-  "supabaseUrl": "",
-  "supabaseAnonKey": "",
-  "aiProxy": "",
+  "supabaseUrl": "https://izyyaxovwwvjrladiumv.supabase.co",
+  "supabaseAnonKey": "sb_publishable_nCqQWacYrOdTDGU9yspukA_jQvQoc9I",
+  "aiProxy": "https://ai-proxy.goede-aeb.workers.dev",
   "google": false,
   "prompts": [
     {
